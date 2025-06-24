@@ -14,12 +14,17 @@ const Footer = () => {
 					business shipments — we deliver on time, every time.
 				</p>
 			</div>
-			<nav className="grid grid-flow-col gap-4 text-base">
-				<Link className="link link-hover">About us</Link>
-				<Link className="link link-hover">Contact</Link>
-				<Link className="link link-hover">Jobs</Link>
-				<Link className="link link-hover">Press kit</Link>
-			</nav>
+			<div className="border-y border-dashed py-8 border-c03464d w-full">
+				<nav className="grid md:grid-flow-col grid-cols-1 gap-6 text-base">
+					<Link className="link link-hover">Services</Link>
+					<Link className="link link-hover">Coverage</Link>
+					<Link className="link link-hover">About Us</Link>
+					<Link className="link link-hover">Pricing</Link>
+					<Link className="link link-hover">Blog</Link>
+					<Link className="link link-hover">Contact</Link>
+				</nav>
+			</div>
+
 			<nav>
 				<div className="grid grid-flow-col gap-4">
 					<a>
