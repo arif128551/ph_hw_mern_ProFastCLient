@@ -47,7 +47,7 @@ const HowItWorks = () => {
 
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 					{services.map((service, index) => (
-						<div key={index} className="bg-white/70 rounded-xl p-6 transition-shadow duration-300">
+						<div key={index} className="bg-white/70 rounded-xl p-6 transition-shadow duration-300" data-aos="fade-up">
 							<div className="flex justify-center mb-4">{getIcon(service.icon)}</div>
 
 							<h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">{service.title}</h3>
