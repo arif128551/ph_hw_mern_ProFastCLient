@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router";
-import profastLogo from "../../../assets/logo.png";
+import Logo from "../Logo/Logo";
 const Navbar = () => {
 	const listItems = (
 		<>
@@ -47,7 +47,7 @@ const Navbar = () => {
 					</ul>
 				</div>
 				<Link className="text-xl flex gap-0 items-end">
-					<img src={profastLogo} alt="Profast " /> <span className="-ml-4 -mb-1 font-extrabold text-3xl">Profast</span>
+					<Logo></Logo>
 				</Link>
 			</div>
 			<div className="navbar-center hidden lg:flex">
