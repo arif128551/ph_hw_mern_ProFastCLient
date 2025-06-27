@@ -1,9 +1,9 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link } from "react-router";
-
-const Login = () => {
+import { Link, useLocation, useNavigate } from "react-router";
+import useAuth from "../../../hooks/useAuth";
+const Register = () => {
 	const {
 		register,
 		handleSubmit,
@@ -11,8 +11,38 @@ const Login = () => {
 		formState: { errors },
 	} = useForm();
 
-	const onSubmit = (data) => {
-		console.log(data);
+	const { createUser, setUser, updateUser, googleSignIn, setLoading } = useAuth();
+
+	const location = useLocation();
+	const navigate = useNavigate();
+	const from = location.state?.from?.pathname || "/";
+
+	const onSubmit = async (data) => {
+		const { displayName, photoUrl, email, password } = data;
+
+		try {
+			const userCredential = await createUser(email, password);
+			const user = userCredential.user;
+
+			await updateUser({ displayName, photoUrl });
+
+			setUser({ ...user, displayName, photoUrl });
+
+			// const userProfile = {
+			// 	displayName,
+			// 	photoUrl,
+			// 	email,
+			// 	creationTime: user.metadata?.creationTime,
+			// 	lastSignInTime: user.metadata?.lastSignInTime,
+			// };
+
+			setLoading(false);
+			navigate(from, { replace: true });
+			toast.success("Registration successful!");
+		} catch (error) {
+			console.error(error);
+			toast.error("Registration failed. Please provide valid information.");
+		}
 	};
 
 	const onError = (errors) => {
@@ -20,12 +50,37 @@ const Login = () => {
 			toast.error(error.message);
 		});
 	};
-
 	return (
 		<div className="w-[384px]">
-			<h2 className="text-5xl font-extrabold mb-1">Welcome Back</h2>
-			<p className="mb-5">Login with Profast</p>
+			<h2 className="text-4xl font-extrabold mb-1">Create an Account</h2>
+			<p className="mb-5">Register with Profast</p>
 			<form className="fieldset" onSubmit={handleSubmit(onSubmit, onError)}>
+				<label className="label">Name</label>
+				<input
+					type="text"
+					className="input mb-3 w-full"
+					placeholder="Name"
+					{...register("displayName", {
+						required: "Name is required",
+						pattern: {
+							value: /^[A-Za-z\s]+$/,
+							message: "Please enter a valid name",
+						},
+					})}
+				/>
+				<label className="label">Photo URL</label>
+				<input
+					type="text"
+					className="input mb-3 w-full"
+					placeholder="Photo URL"
+					{...register("photoUrl", {
+						required: "Photo URL is required",
+						pattern: {
+							value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i,
+							message: "Please enter a valid photo url",
+						},
+					})}
+				/>
 				<label className="label">Email</label>
 				<input
 					type="email"
@@ -56,13 +111,10 @@ const Login = () => {
 						},
 					})}
 				/>
-				<div>
-					<a className="link link-hover">Forgot password?</a>
-				</div>
-				<button className="btn mt-2 bg-ccaeb66 text-black">Login</button>
+				<button className="btn mt-2 bg-ccaeb66 text-black">Register</button>
 			</form>
 			<p className="mt-1 text-gray-400">
-				Don’t have any account? <Link to="/register">Register</Link>
+				Have an account? <Link to="/login">Login</Link>
 			</p>
 			<div className="flex items-center gap-4 my-6">
 				<hr className="flex-grow border-t border-gray-300" />
@@ -85,4 +137,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default Register;

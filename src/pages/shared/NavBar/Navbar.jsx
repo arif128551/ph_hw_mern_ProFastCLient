@@ -54,9 +54,12 @@ const Navbar = () => {
 				<ul className="menu menu-horizontal px-1 font-medium text-c606060">{listItems}</ul>
 			</div>
 			<div className="navbar-end hidden gap-4 sm:flex">
-				<button className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-c606060/50 text-c606060 rounded-xl cursor-pointer">
+				<Link
+					to="/login"
+					className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-c606060/50 text-c606060 rounded-xl cursor-pointer"
+				>
 					Sign In
-				</button>
+				</Link>
 				<Link className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-ccaeb66 rounded-xl bg-ccaeb66 text-c1f1f1f">
 					Be a rider
 				</Link>

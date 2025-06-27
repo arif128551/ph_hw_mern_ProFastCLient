@@ -4,9 +4,9 @@ import { Link, Outlet } from "react-router";
 import authImg from "../assets/authImage.png";
 const AuthLayout = () => {
 	return (
-		<div className="flex h-screen">
-			<div className="w-3/5 px-11 py-14 h-full">
-				<div>
+		<div className="flex lg:h-screen flex-col lg:flex-row">
+			<div className="lg:w-7/12 px-11 py-14 lg:h-full">
+				<div className="mb-10 lg:mb-0">
 					<Link to="/" className="flex gap-0 items-end">
 						<Logo></Logo>
 					</Link>
@@ -15,7 +15,7 @@ const AuthLayout = () => {
 					<Outlet></Outlet>
 				</div>
 			</div>
-			<div className="w-2/5 h-full bg-[#FAFDF0] flex items-center justify-center">
+			<div className="hidden lg:w-5/12 h-full bg-[#FAFDF0] lg:flex items-center justify-center">
 				<img src={authImg} alt="Authentication system Image" />
 			</div>
 		</div>
