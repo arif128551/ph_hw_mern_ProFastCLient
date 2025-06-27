@@ -6,6 +6,7 @@ import TrustedBy from "./sections/TrustedBy/TrustedBy";
 import DeliveryFeatures from "./sections/DeliveryFeatures/DeliveryFeatures";
 import PriorityBanner from "./sections/PriorityBanner/PriorityBanner";
 import TestimonialSlider from "./sections/TestimonialSlider/TestimonialSlider";
+import FaqSection from "./sections/FaqSection/FaqSection";
 
 const Home = () => {
 	return (
@@ -17,6 +18,7 @@ const Home = () => {
 			<DeliveryFeatures></DeliveryFeatures>
 			<PriorityBanner></PriorityBanner>
 			<TestimonialSlider></TestimonialSlider>
+			<FaqSection></FaqSection>
 		</>
 	);
 };
