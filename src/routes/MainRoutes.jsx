@@ -27,6 +27,7 @@ export const router = createBrowserRouter([
 			{
 				path: "/send-parcel",
 				Component: SendParcel,
+				loader: () => axios.get("/warehouses.json").then((res) => res.data),
 			},
 		],
 	},
