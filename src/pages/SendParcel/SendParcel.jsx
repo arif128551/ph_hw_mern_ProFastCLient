@@ -125,9 +125,18 @@ const SendParcel = () => {
 
 		try {
 			const res = await axiosSecure.post("/parcel", parcelData);
-			console.log(res.data);
-			Swal.fire("Success!", `Booking Confirmed!<br><strong>Tracking ID:</strong> ${tracking_id}`, "success");
-			reset();
+			const data = res.data;
+			if (data.insertedId) {
+				reset();
+				// todo redirecting here!
+				Swal.fire({
+					icon: "success",
+					title: "Redirecting...",
+					text: "Proceeding to payment gateway!",
+					showConfirmButton: false,
+					timer: 1500,
+				});
+			}
 		} catch (error) {
 			Swal.fire("Error", "Server error. Please try again.", "error");
 		}
