@@ -8,6 +8,9 @@ import Register from "../pages/auth/Register/Register";
 import Coverage from "../pages/coverage/Coverage";
 import axios from "axios";
 import SendParcel from "../pages/SendParcel/SendParcel";
+import PrivateRoute from "./PrivateRoute";
+import DashboardLayout from "../layouts/DashboardLayout";
+import MyParcel from "../pages/dashboard/MyParcel/MyParcel";
 
 export const router = createBrowserRouter([
 	{
@@ -26,7 +29,11 @@ export const router = createBrowserRouter([
 			},
 			{
 				path: "/send-parcel",
-				Component: SendParcel,
+				element: (
+					<PrivateRoute>
+						<SendParcel></SendParcel>
+					</PrivateRoute>
+				),
 				loader: () => axios.get("/warehouses.json").then((res) => res.data),
 			},
 		],
@@ -43,6 +50,21 @@ export const router = createBrowserRouter([
 			{
 				path: "/register",
 				Component: Register,
+			},
+		],
+	},
+	{
+		path: "/dashboard",
+		element: (
+			<PrivateRoute>
+				<DashboardLayout></DashboardLayout>
+			</PrivateRoute>
+		),
+		errorElement: <NotFound></NotFound>,
+		children: [
+			{
+				path: "my-parcel",
+				Component: MyParcel,
 			},
 		],
 	},

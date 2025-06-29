@@ -128,7 +128,6 @@ const SendParcel = () => {
 			const data = res.data;
 			if (data.insertedId) {
 				reset();
-				// todo redirecting here!
 				Swal.fire({
 					icon: "success",
 					title: "Redirecting...",
@@ -224,7 +223,7 @@ const SendParcel = () => {
 						<div className="flex  flex-col sm:flex-row gap-7">
 							<div className="flex-1">
 								<label className="label">Sender Name</label>
-								<input type="text" value="Md Arif Uddin" readOnly className="input input-bordered w-full" />
+								<input type="text" placeholder="Sender Name" className="input input-bordered w-full" />
 							</div>
 
 							<div className="flex-1">

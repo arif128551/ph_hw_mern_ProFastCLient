@@ -2,6 +2,7 @@ import React from "react";
 import Logo from "../pages/shared/Logo/Logo";
 import { Link, Outlet, useNavigation } from "react-router";
 import authImg from "../assets/authImage.png";
+import PageLoader from "../components/PageLoader";
 const AuthLayout = () => {
 	const navigation = useNavigation();
 	const isLoading = navigation.state === "loading";

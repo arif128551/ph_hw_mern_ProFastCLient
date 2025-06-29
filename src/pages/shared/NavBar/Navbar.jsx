@@ -41,6 +41,9 @@ const Navbar = () => {
 			</li>
 			{user ? (
 				<>
+					<li>
+						<NavLink to="/dashboard">Dashboard</NavLink>
+					</li>
 					<li className="sm:hidden">
 						<button onClick={handleLogout}>Logout</button>
 					</li>
