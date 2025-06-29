@@ -1,7 +1,21 @@
 import React from "react";
 import { Link, NavLink } from "react-router";
 import Logo from "../Logo/Logo";
+import useAuth from "../../../hooks/useAuth";
+import toast from "react-hot-toast";
 const Navbar = () => {
+	const { user, signOutUser } = useAuth();
+
+	const handleLogout = () => {
+		signOutUser()
+			.then(() => {
+				toast.success("You’re now logged out. See you again soon!");
+			})
+			.catch((error) => {
+				toast(error);
+			});
+	};
+
 	const listItems = (
 		<>
 			<li>
@@ -22,11 +36,22 @@ const Navbar = () => {
 			<li>
 				<NavLink to="/be-a-rider">Be a Rider</NavLink>
 			</li>
-			<li className="sm:hidden">
-				<NavLink to="/signin">Sign In</NavLink>
-			</li>
+			{user ? (
+				<>
+					<li className="sm:hidden">
+						<button onClick={handleLogout}>Logout</button>
+					</li>
+				</>
+			) : (
+				<>
+					<li className="sm:hidden">
+						<NavLink to="/signin">Sign In</NavLink>
+					</li>
+				</>
+			)}
 		</>
 	);
+
 	return (
 		<div className="navbar bg-base-100 max-w-8xl mx-auto px-8 py-6 rounded-2xl">
 			<div className="navbar-start">
@@ -54,15 +79,31 @@ const Navbar = () => {
 				<ul className="menu menu-horizontal px-1 font-medium text-c606060">{listItems}</ul>
 			</div>
 			<div className="navbar-end hidden gap-4 sm:flex">
-				<Link
-					to="/login"
-					className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-c606060/50 text-c606060 rounded-xl cursor-pointer"
-				>
-					Sign In
-				</Link>
-				<Link className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-ccaeb66 rounded-xl bg-ccaeb66 text-c1f1f1f">
-					Be a rider
-				</Link>
+				{user ? (
+					<>
+						<Link className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-ccaeb66 rounded-xl bg-ccaeb66 text-c1f1f1f">
+							Be a rider
+						</Link>
+						<button
+							onClick={handleLogout}
+							className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-ccaeb66 rounded-xl bg-ccaeb66 text-c1f1f1f cursor-pointer"
+						>
+							Logout
+						</button>
+					</>
+				) : (
+					<>
+						<Link
+							to="/login"
+							className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-c606060/50 text-c606060 rounded-xl cursor-pointer"
+						>
+							Sign In
+						</Link>
+						<Link className="xl:text-xl font-bold xl:px-8 xl:py-3 px-3 py-2 border border-ccaeb66 rounded-xl bg-ccaeb66 text-c1f1f1f">
+							Be a rider
+						</Link>
+					</>
+				)}
 			</div>
 		</div>
 	);

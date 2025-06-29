@@ -50,6 +50,47 @@ const Register = () => {
 			toast.error(error.message);
 		});
 	};
+
+	const handleGoogleBtnLogin = () => {
+		googleSignIn().then((result) => {
+			const user = result.user;
+			const { creationTime, lastSignInTime } = user.metadata;
+
+			toast.success("You're now logged in.");
+
+			navigate(from, { replace: true });
+
+			// 	const userProfile = {
+			// 		displayName: user.displayName,
+			// 		photoURL: user.photoURL,
+			// 		email: user.email,
+			// 		creationTime,
+			// 		lastSignInTime,
+			// 	};
+
+			// 	axios
+			// 		.post(`${import.meta.env.VITE_apiUrl}/users`, userProfile)
+			// 		.then((response) => {
+			// 			const data = response.data;
+
+			// 			if (data.status === "new") {
+			// 				toast.success("Account created successfully with Google! You're now logged in.");
+			// 			} else if (data.status === "existing") {
+			// 				toast.success("Welcome back! You've logged in with Google.");
+			// 			}
+
+			// 			navigate(from, { replace: true });
+			// 		})
+			// 		.catch((error) => {
+			// 			toast.error("User info save failed in database.", error);
+			// 		});
+			// })
+			// .catch((error) => {
+			// 	const errorMessage = error.message;
+			// 	toast.error(errorMessage);
+		});
+	};
+
 	return (
 		<div className="w-[384px]">
 			<h2 className="text-4xl font-extrabold mb-1">Create an Account</h2>
@@ -121,7 +162,7 @@ const Register = () => {
 				<span className="text-gray-500 text-sm font-medium">Or</span>
 				<hr className="flex-grow border-t border-gray-300" />
 			</div>
-			<button className="btn bg-white text-black border-[#e5e5e5] w-full">
+			<button onClick={handleGoogleBtnLogin} className="btn bg-white text-black border-[#e5e5e5] w-full">
 				<svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 					<g>
 						<path d="m0 0H512V512H0" fill="#fff"></path>

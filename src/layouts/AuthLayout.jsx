@@ -1,8 +1,15 @@
 import React from "react";
 import Logo from "../pages/shared/Logo/Logo";
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useNavigation } from "react-router";
 import authImg from "../assets/authImage.png";
 const AuthLayout = () => {
+	const navigation = useNavigation();
+	const isLoading = navigation.state === "loading";
+
+	if (isLoading) {
+		return <PageLoader />;
+	}
+
 	return (
 		<div className="flex lg:h-screen flex-col lg:flex-row">
 			<div className="lg:w-7/12 px-11 py-14 lg:h-full">

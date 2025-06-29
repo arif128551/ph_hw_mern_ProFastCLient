@@ -1,7 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
+import useAuth from "../../../hooks/useAuth";
 
 const Login = () => {
 	const {
@@ -11,8 +12,44 @@ const Login = () => {
 		formState: { errors },
 	} = useForm();
 
+	const { signInUserWithEmailPass, googleSignIn, setLoading } = useAuth();
+
+	const location = useLocation();
+	const navigate = useNavigate();
+	const from = location.state?.from?.pathname || "/";
+
 	const onSubmit = (data) => {
-		console.log(data);
+		const { email, password } = data;
+		signInUserWithEmailPass(email, password)
+			.then((result) => {
+				const user = result.user;
+				// const lastSignInTime = user.metadata?.lastSignInTime;
+				toast.success("Welcome back! You have successfully logged in.");
+				navigate(from, { replace: true });
+
+				// 	axios
+				// 		.post(`${import.meta.env.VITE_apiUrl}/users`, {
+				// 			email,
+				// 			lastSignInTime,
+				// 		})
+				// 		.then(() => {
+				// 			toast.success("Welcome back! You have successfully logged in.");
+				// 		})
+				// 		.catch((err) => {
+				// 			toast.error("Login successful, but failed to update DB.", err);
+				// 		});
+
+				// 	toast.success("Welcome back! You have successfully logged in.");
+				// 	navigate(from, { replace: true });
+			})
+			.catch((error) => {
+				if (error.code === "auth/wrong-password") {
+					toast.error("Wrong password. Please try again.");
+				} else {
+					toast.error("Invalid email or password. Please try again.");
+				}
+			})
+			.finally(() => setLoading(false));
 	};
 
 	const onError = (errors) => {
@@ -21,6 +58,45 @@ const Login = () => {
 		});
 	};
 
+	const handleGoogleBtnLogin = () => {
+		googleSignIn().then((result) => {
+			const user = result.user;
+			const { creationTime, lastSignInTime } = user.metadata;
+
+			toast.success("You're now logged in.");
+
+			navigate(from, { replace: true });
+
+			// 	const userProfile = {
+			// 		displayName: user.displayName,
+			// 		photoURL: user.photoURL,
+			// 		email: user.email,
+			// 		creationTime,
+			// 		lastSignInTime,
+			// 	};
+
+			// 	axios
+			// 		.post(`${import.meta.env.VITE_apiUrl}/users`, userProfile)
+			// 		.then((response) => {
+			// 			const data = response.data;
+
+			// 			if (data.status === "new") {
+			// 				toast.success("Account created successfully with Google! You're now logged in.");
+			// 			} else if (data.status === "existing") {
+			// 				toast.success("Welcome back! You've logged in with Google.");
+			// 			}
+
+			// 			navigate(from, { replace: true });
+			// 		})
+			// 		.catch((error) => {
+			// 			toast.error("User info save failed in database.", error);
+			// 		});
+			// })
+			// .catch((error) => {
+			// 	const errorMessage = error.message;
+			// 	toast.error(errorMessage);
+		});
+	};
 	return (
 		<div className="w-[384px]">
 			<h2 className="text-5xl font-extrabold mb-1">Welcome Back</h2>
@@ -69,7 +145,7 @@ const Login = () => {
 				<span className="text-gray-500 text-sm font-medium">Or</span>
 				<hr className="flex-grow border-t border-gray-300" />
 			</div>
-			<button className="btn bg-white text-black border-[#e5e5e5] w-full">
+			<button onClick={handleGoogleBtnLogin} className="btn bg-white text-black border-[#e5e5e5] w-full">
 				<svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
 					<g>
 						<path d="m0 0H512V512H0" fill="#fff"></path>
