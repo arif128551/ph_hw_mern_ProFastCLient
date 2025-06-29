@@ -8,7 +8,7 @@ const SendParcel = () => {
 	const {
 		register,
 		handleSubmit,
-		watch,
+		reset,
 		formState: { errors },
 	} = useForm();
 	const [parcelType, setParcelType] = useState("document");
@@ -19,10 +19,41 @@ const SendParcel = () => {
 			cost += parseFloat(data.parcelWeight) * 10;
 		}
 
-		toast.success(`Estimated Delivery Cost: ৳${cost}`, {
-			duration: 5000,
-			icon: "🚚",
-		});
+		// Show toast with Confirm button
+		toast.custom((t) => (
+			<div className="bg-white shadow-md border px-6 py-4 rounded-lg">
+				<p className="font-bold text-lg">Estimated Delivery Cost: ৳{cost}</p>
+				<div className="mt-4 flex justify-end gap-3">
+					<button onClick={() => toast.dismiss(t.id)} className="btn btn-sm">
+						Cancel
+					</button>
+					<button
+						onClick={() => {
+							toast.dismiss(t.id);
+							handleConfirm(data, cost);
+						}}
+						className="btn btn-sm btn-success"
+					>
+						Confirm
+					</button>
+				</div>
+			</div>
+		));
+	};
+
+	const handleConfirm = async (data, cost) => {
+		const parcelData = {
+			...data,
+			type: parcelType,
+			deliveryCost: cost,
+			creation_date: new Date().toISOString(),
+		};
+
+		try {
+			console.log(parcelData);
+		} catch (error) {
+			toast.error("Server error. Please try again.");
+		}
 	};
 
 	return (
