@@ -1,7 +1,8 @@
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Outlet, useNavigation } from "react-router";
+import { NavLink, Outlet, useNavigation } from "react-router";
 import useAuth from "../hooks/useAuth";
 import PageLoader from "../components/PageLoader";
+import Logo from "../pages/shared/Logo/Logo";
 
 const DashboardLayout = () => {
 	const { loading, user } = useAuth();
@@ -23,7 +24,10 @@ const DashboardLayout = () => {
 						<h2 className="text-xl font-semibold hidden sm:block">Dashboard</h2>
 					</div>
 					<div className="text-xl font-semibold">
-						<h4>{user.displayName}</h4>
+						<h4>
+							{user.displayName}
+							{/* {user.email} */}
+						</h4>
 					</div>
 				</div>
 
@@ -32,20 +36,31 @@ const DashboardLayout = () => {
 				</div>
 			</div>
 
-			<div className="drawer-side z-40">
+			<div className="drawer-side z-999">
 				<label htmlFor="dashboard-drawer" className="drawer-overlay"></label>
 
-				<ul className="menu p-4 w-72 min-h-full bg-gray-800 text-white space-y-1">
-					<div className="lg:hidden flex justify-end mb-4">
-						<label htmlFor="dashboard-drawer" className="btn btn-sm btn-circle">
-							<FaTimes />
-						</label>
-					</div>
-					<li>
-						<a className="hover:bg-gray-700 rounded">Dashboard</a>
+				<ul className="menu p-4 w-60 min-h-full bg-gray-800 text-white space-y-3 relative">
+					<li className="absolute -right-3 z-9999 -top-2">
+						<div className="lg:hidden flex justify-end mb-4">
+							<label htmlFor="dashboard-drawer" className="cursor-pointer bg-ccaeb66/80 hover:bg-ccaeb66 border-0 p-4">
+								<FaTimes className="text-xl text-black" />
+							</label>
+						</div>
+					</li>
+					<li className="mt-5 mb-5">
+						<NavLink to="/" className="rounded text-xl flex gap-0 items-end">
+							<Logo />
+						</NavLink>
 					</li>
 					<li>
-						<a className="hover:bg-gray-700 rounded">Posts</a>
+						<NavLink to="/dashboard" className="hover:bg-gray-700 rounded">
+							Dashboard
+						</NavLink>
+					</li>
+					<li>
+						<NavLink to="/dashboard/my-parcel" className="hover:bg-gray-700 rounded">
+							My Parcels
+						</NavLink>
 					</li>
 					<li>
 						<a className="hover:bg-gray-700 rounded">Media</a>
@@ -61,6 +76,11 @@ const DashboardLayout = () => {
 					</li>
 					<li>
 						<a className="hover:bg-gray-700 rounded">Settings</a>
+					</li>
+					<li>
+						<NavLink to="/" className="hover:bg-gray-700 rounded">
+							Visit Site
+						</NavLink>
 					</li>
 				</ul>
 			</div>
