@@ -6,6 +6,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { format } from "date-fns";
 import Swal from "sweetalert2";
+import { Link } from "react-router";
 const MyParcel = () => {
 	const { user } = useAuth();
 	const axiosSecure = useAxiosSecure();
@@ -107,6 +108,13 @@ const MyParcel = () => {
 								<td className="font-mono">{parcel.tracking_id}</td>
 								<td>{format(new Date(parcel.created_at), "PPpp")}</td>
 								<td className="flex items-center justify-center gap-3 text-lg">
+									<Link
+										to={`/dashboard/payment/${parcel._id}`}
+										className="text-blue-600 hover:text-blue-800"
+										title="View"
+									>
+										Pay
+									</Link>
 									<button onClick={() => handleView(parcel)} className="text-blue-600 hover:text-blue-800" title="View">
 										<FaEye />
 									</button>
