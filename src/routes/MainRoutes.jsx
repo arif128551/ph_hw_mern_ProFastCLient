@@ -11,6 +11,7 @@ import SendParcel from "../pages/SendParcel/SendParcel";
 import PrivateRoute from "./PrivateRoute";
 import DashboardLayout from "../layouts/DashboardLayout";
 import MyParcel from "../pages/dashboard/MyParcel/MyParcel";
+import Dashboard from "../pages/dashboard/Dashboard/Dashboard";
 
 export const router = createBrowserRouter([
 	{
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
 		),
 		errorElement: <NotFound></NotFound>,
 		children: [
+			{
+				path: "",
+				Component: Dashboard,
+			},
 			{
 				path: "my-parcel",
 				Component: MyParcel,
