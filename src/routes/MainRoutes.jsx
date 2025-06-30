@@ -73,7 +73,7 @@ export const router = createBrowserRouter([
 				Component: MyParcel,
 			},
 			{
-				path: "payment/:id",
+				path: "payment/:parcelId",
 				Component: Payment,
 			},
 		],
