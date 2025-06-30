@@ -5,11 +5,12 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { format } from "date-fns";
+import Swal from "sweetalert2";
 const MyParcel = () => {
 	const { user } = useAuth();
 	const axiosSecure = useAxiosSecure();
 
-	const { isPending, isError, data, error } = useQuery({
+	const { isPending, isError, data, error, refetch } = useQuery({
 		queryKey: ["my-parcel", user?.email],
 		enabled: !!user?.email,
 		queryFn: async () => {
@@ -31,9 +32,40 @@ const MyParcel = () => {
 		// You can navigate to edit form
 	};
 
-	const handleDelete = (id) => {
-		console.log("Delete Parcel ID:", id);
-		// You can call axiosSecure.delete(`/parcels/${id}`) here
+	const handleDelete = async (id) => {
+		try {
+			const result = await Swal.fire({
+				title: "Are you sure?",
+				text: "You won't be able to revert this!",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#d33",
+				cancelButtonColor: "#3085d6",
+				confirmButtonText: "Yes, delete it!",
+			});
+
+			if (result.isConfirmed) {
+				const res = await axiosSecure.delete(`/parcel/${id}`);
+
+				if (res.data.deletedCount > 0) {
+					await Swal.fire({
+						icon: "success",
+						title: "Your parcel has been deleted.",
+						showConfirmButton: false,
+						timer: 1500,
+					});
+					refetch();
+				}
+			}
+		} catch (error) {
+			console.error(error);
+			await Swal.fire({
+				icon: "error",
+				title: "Something went wrong.",
+				showConfirmButton: false,
+				timer: 1500,
+			});
+		}
 	};
 
 	return (
@@ -42,8 +74,9 @@ const MyParcel = () => {
 
 			<div className="overflow-x-auto bg-white shadow rounded">
 				<table className="table table-zebra w-full">
-					<thead className="bg-gray-100 text-gray-700">
+					<thead className="bg-gray-200 text-gray-700">
 						<tr>
+							<th>#</th>
 							<th>Title</th>
 							<th>Type</th>
 							<th>Delivery Status</th>
@@ -54,8 +87,9 @@ const MyParcel = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{data.map((parcel) => (
+						{data.map((parcel, index) => (
 							<tr key={parcel._id}>
+								<td>{index + 1}</td>
 								<td>{parcel.title}</td>
 								<td>{parcel.type || <span className="text-gray-400 italic">N/A</span>}</td>
 								<td>
