@@ -80,6 +80,7 @@ const MyParcel = () => {
 							<th>#</th>
 							<th>Title</th>
 							<th>Type</th>
+							<th>Amount</th>
 							<th>Delivery Status</th>
 							<th>Payment Status</th>
 							<th>Tracking ID</th>
@@ -93,6 +94,7 @@ const MyParcel = () => {
 								<td>{index + 1}</td>
 								<td>{parcel.title}</td>
 								<td>{parcel.type || <span className="text-gray-400 italic">N/A</span>}</td>
+								<td>{parcel.deliveryCost}</td>
 								<td>
 									<span
 										className={`badge ${parcel.delivery_status === "collected" ? "badge-success" : "badge-warning"}`}
@@ -108,22 +110,17 @@ const MyParcel = () => {
 								<td className="font-mono">{parcel.tracking_id}</td>
 								<td>{format(new Date(parcel.created_at), "PPpp")}</td>
 								<td className="flex items-center justify-center gap-3 text-lg">
-									<Link
-										to={`/dashboard/payment/${parcel._id}`}
-										className="text-blue-600 hover:text-blue-800"
-										title="View"
-									>
-										Pay
-									</Link>
+									{parcel.payment_status !== "paid" && (
+										<Link
+											to={`/dashboard/payment/${parcel._id}`}
+											className="text-blue-600 hover:text-blue-800"
+											title="View"
+										>
+											Pay
+										</Link>
+									)}
 									<button onClick={() => handleView(parcel)} className="text-blue-600 hover:text-blue-800" title="View">
 										<FaEye />
-									</button>
-									<button
-										onClick={() => handleEdit(parcel)}
-										className="text-green-600 hover:text-green-800"
-										title="Edit"
-									>
-										<FaEdit />
 									</button>
 									<button
 										onClick={() => handleDelete(parcel._id)}

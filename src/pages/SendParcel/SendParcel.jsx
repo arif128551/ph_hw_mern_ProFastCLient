@@ -2,7 +2,6 @@ import React from "react";
 
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
 import { useLoaderData } from "react-router";
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";

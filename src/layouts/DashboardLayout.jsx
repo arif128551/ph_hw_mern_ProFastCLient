@@ -63,19 +63,19 @@ const DashboardLayout = () => {
 						</NavLink>
 					</li>
 					<li>
-						<a className="hover:bg-gray-700 rounded">Media</a>
+						<NavLink to="/dashboard/payment-history" className="hover:bg-gray-700 rounded">
+							Payment History
+						</NavLink>
 					</li>
 					<li>
-						<a className="hover:bg-gray-700 rounded">Pages</a>
+						<NavLink to="/dashboard/track-parcel" className="hover:bg-gray-700 rounded">
+							Track parcel
+						</NavLink>
 					</li>
 					<li>
-						<a className="hover:bg-gray-700 rounded">Plugins</a>
-					</li>
-					<li>
-						<a className="hover:bg-gray-700 rounded">Users</a>
-					</li>
-					<li>
-						<a className="hover:bg-gray-700 rounded">Settings</a>
+						<NavLink to="/dashboard/profile" className="hover:bg-gray-700 rounded">
+							Profile
+						</NavLink>
 					</li>
 					<li>
 						<NavLink to="/" className="hover:bg-gray-700 rounded">
