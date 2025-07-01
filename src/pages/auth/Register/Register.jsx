@@ -1,47 +1,95 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
+import axios from "axios";
+import useAxios from "../../../hooks/useAxios";
+import useSocialLogin from "../../../hooks/useSocialLogin";
+
 const Register = () => {
 	const {
 		register,
 		handleSubmit,
+		setValue,
 		watch,
 		formState: { errors },
 	} = useForm();
 
 	const { createUser, setUser, updateUser, googleSignIn, setLoading } = useAuth();
+	const [imagePreview, setImagePreview] = useState(null);
+	const axiosInstance = useAxios();
+	const socialLogin = useSocialLogin();
 
 	const location = useLocation();
 	const navigate = useNavigate();
 	const from = location.state?.from?.pathname || "/";
 
-	const onSubmit = async (data) => {
-		const { displayName, photoUrl, email, password } = data;
+	const onSubmit = async ({ displayName, photoUrl, email, password }) => {
+		setLoading(true);
+		const timestamp = new Date().toISOString();
 
 		try {
-			const userCredential = await createUser(email, password);
-			const user = userCredential.user;
+			const { user } = await createUser(email, password);
+			await updateUser({ displayName, photoURL: photoUrl });
 
-			await updateUser({ displayName, photoUrl });
+			setUser({ ...user, displayName, photoURL: photoUrl });
 
-			setUser({ ...user, displayName, photoUrl });
+			const userDoc = {
+				displayName,
+				email,
+				photoUrl,
+				role: "user",
+				created_at: timestamp,
+				last_login_at: timestamp,
+			};
 
-			// const userProfile = {
-			// 	displayName,
-			// 	photoUrl,
-			// 	email,
-			// 	creationTime: user.metadata?.creationTime,
-			// 	lastSignInTime: user.metadata?.lastSignInTime,
-			// };
+			try {
+				await axiosInstance.post("/users", userDoc);
+				toast.success("Registration successful!");
+				navigate(from || "/", { replace: true });
+			} catch (error) {
+				if (error.response?.status === 409) {
+					toast.error("User already exists. Please login instead.");
+				} else {
+					toast.error("Registration failed. Please try again.");
+				}
+			}
 
-			setLoading(false);
-			navigate(from, { replace: true });
 			toast.success("Registration successful!");
+			navigate(from || "/", { replace: true });
 		} catch (error) {
-			console.error(error);
-			toast.error("Registration failed. Please provide valid information.");
+			console.error("Registration Error:", error);
+			toast.error("Registration failed. Please check your info.");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const handleImageUpload = async (e) => {
+		const imageFile = e.target.files[0];
+		if (!imageFile) return;
+
+		// show preview
+		setImagePreview(URL.createObjectURL(imageFile));
+
+		// upload to imgbb
+		const formData = new FormData();
+		formData.append("image", imageFile);
+
+		try {
+			const res = await axios.post(
+				`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`,
+				formData
+			);
+
+			if (res.data.success) {
+				const imageUrl = res.data.data.url;
+				setValue("photoUrl", imageUrl);
+				console.log("Image uploaded:", imageUrl);
+			}
+		} catch (err) {
+			console.error("Image upload failed", err);
 		}
 	};
 
@@ -52,43 +100,7 @@ const Register = () => {
 	};
 
 	const handleGoogleBtnLogin = () => {
-		googleSignIn().then((result) => {
-			const user = result.user;
-			const { creationTime, lastSignInTime } = user.metadata;
-
-			toast.success("You're now logged in.");
-
-			navigate(from, { replace: true });
-
-			// 	const userProfile = {
-			// 		displayName: user.displayName,
-			// 		photoURL: user.photoURL,
-			// 		email: user.email,
-			// 		creationTime,
-			// 		lastSignInTime,
-			// 	};
-
-			// 	axios
-			// 		.post(`${import.meta.env.VITE_apiUrl}/users`, userProfile)
-			// 		.then((response) => {
-			// 			const data = response.data;
-
-			// 			if (data.status === "new") {
-			// 				toast.success("Account created successfully with Google! You're now logged in.");
-			// 			} else if (data.status === "existing") {
-			// 				toast.success("Welcome back! You've logged in with Google.");
-			// 			}
-
-			// 			navigate(from, { replace: true });
-			// 		})
-			// 		.catch((error) => {
-			// 			toast.error("User info save failed in database.", error);
-			// 		});
-			// })
-			// .catch((error) => {
-			// 	const errorMessage = error.message;
-			// 	toast.error(errorMessage);
-		});
+		socialLogin();
 	};
 
 	return (
@@ -109,19 +121,27 @@ const Register = () => {
 						},
 					})}
 				/>
-				<label className="label">Photo URL</label>
+				{/* ✅ Image Preview */}
+				{imagePreview && (
+					<img src={imagePreview} alt="Preview" className="w-32 h-32 object-cover rounded-full mx-auto" />
+				)}
+
+				{/* ✅ Image Upload Input */}
 				<input
-					type="text"
-					className="input mb-3 w-full"
-					placeholder="Photo URL"
+					type="file"
+					accept="image/*"
+					onChange={handleImageUpload}
+					className="file-input file-input-bordered w-full"
+				/>
+
+				{/* ✅ Hidden Photo URL Input for Form Submission */}
+				<input
+					type="hidden"
 					{...register("photoUrl", {
 						required: "Photo URL is required",
-						pattern: {
-							value: /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg))$/i,
-							message: "Please enter a valid photo url",
-						},
 					})}
 				/>
+				{errors.photoUrl && <p className="text-red-500">{errors.photoUrl.message}</p>}
 				<label className="label">Email</label>
 				<input
 					type="email"

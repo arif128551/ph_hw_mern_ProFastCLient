@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../../hooks/useAuth";
+import useSocialLogin from "../../../hooks/useSocialLogin";
+import useAxios from "../../../hooks/useAxios";
 
 const Login = () => {
 	const {
@@ -12,7 +14,9 @@ const Login = () => {
 		formState: { errors },
 	} = useForm();
 
-	const { signInUserWithEmailPass, googleSignIn, setLoading } = useAuth();
+	const { signInUserWithEmailPass, setLoading } = useAuth();
+	const socialLogin = useSocialLogin();
+	const axiosInstance = useAxios();
 
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -20,27 +24,25 @@ const Login = () => {
 
 	const onSubmit = (data) => {
 		const { email, password } = data;
+		setLoading(true);
+
 		signInUserWithEmailPass(email, password)
-			.then((result) => {
+			.then(async (result) => {
 				const user = result.user;
-				// const lastSignInTime = user.metadata?.lastSignInTime;
+				const lastLoginTime = new Date(user.metadata?.lastSignInTime || Date.now()).toISOString();
+
+				// Update last login time in DB
+				try {
+					await axiosInstance.patch(`/users/${user.email}`, {
+						last_login_at: lastLoginTime,
+					});
+				} catch (err) {
+					console.error("DB update failed:", err.message);
+					toast.error("Login successful, but failed to update login time.");
+				}
+
 				toast.success("Welcome back! You have successfully logged in.");
 				navigate(from, { replace: true });
-
-				// 	axios
-				// 		.post(`${import.meta.env.VITE_apiUrl}/users`, {
-				// 			email,
-				// 			lastSignInTime,
-				// 		})
-				// 		.then(() => {
-				// 			toast.success("Welcome back! You have successfully logged in.");
-				// 		})
-				// 		.catch((err) => {
-				// 			toast.error("Login successful, but failed to update DB.", err);
-				// 		});
-
-				// 	toast.success("Welcome back! You have successfully logged in.");
-				// 	navigate(from, { replace: true });
 			})
 			.catch((error) => {
 				if (error.code === "auth/wrong-password") {
@@ -59,43 +61,7 @@ const Login = () => {
 	};
 
 	const handleGoogleBtnLogin = () => {
-		googleSignIn().then((result) => {
-			const user = result.user;
-			const { creationTime, lastSignInTime } = user.metadata;
-
-			toast.success("You're now logged in.");
-
-			navigate(from, { replace: true });
-
-			// 	const userProfile = {
-			// 		displayName: user.displayName,
-			// 		photoURL: user.photoURL,
-			// 		email: user.email,
-			// 		creationTime,
-			// 		lastSignInTime,
-			// 	};
-
-			// 	axios
-			// 		.post(`${import.meta.env.VITE_apiUrl}/users`, userProfile)
-			// 		.then((response) => {
-			// 			const data = response.data;
-
-			// 			if (data.status === "new") {
-			// 				toast.success("Account created successfully with Google! You're now logged in.");
-			// 			} else if (data.status === "existing") {
-			// 				toast.success("Welcome back! You've logged in with Google.");
-			// 			}
-
-			// 			navigate(from, { replace: true });
-			// 		})
-			// 		.catch((error) => {
-			// 			toast.error("User info save failed in database.", error);
-			// 		});
-			// })
-			// .catch((error) => {
-			// 	const errorMessage = error.message;
-			// 	toast.error(errorMessage);
-		});
+		socialLogin();
 	};
 	return (
 		<div className="w-[384px]">

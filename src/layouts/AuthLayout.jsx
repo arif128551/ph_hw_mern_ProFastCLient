@@ -12,7 +12,7 @@ const AuthLayout = () => {
 	}
 
 	return (
-		<div className="flex lg:h-screen flex-col lg:flex-row">
+		<div className="flex lg:min-h-screen flex-col lg:flex-row">
 			<div className="lg:w-7/12 px-11 py-14 lg:h-full">
 				<div className="mb-10 lg:mb-0">
 					<Link to="/" className="flex gap-0 items-end">
@@ -23,8 +23,10 @@ const AuthLayout = () => {
 					<Outlet></Outlet>
 				</div>
 			</div>
-			<div className="hidden lg:w-5/12 h-full bg-[#FAFDF0] lg:flex items-center justify-center">
-				<img src={authImg} alt="Authentication system Image" />
+			<div className="hidden lg:w-5/12 bg-[#FAFDF0] lg:flex justify-center">
+				<div className="h-full flex items-center">
+					<img src={authImg} alt="Authentication system Image" />
+				</div>
 			</div>
 		</div>
 	);
