@@ -23,6 +23,8 @@ const MyParcel = () => {
 	if (isPending) return <PageLoader />;
 	if (isError) return <span>Error: {error.message}</span>;
 
+	console.log(data);
+
 	const handleView = (parcel) => {
 		console.log("View Parcel:", parcel);
 		// You can route to a detailed view page
@@ -89,49 +91,61 @@ const MyParcel = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{data.map((parcel, index) => (
-							<tr key={parcel._id}>
-								<td>{index + 1}</td>
-								<td>{parcel.title}</td>
-								<td>{parcel.type || <span className="text-gray-400 italic">N/A</span>}</td>
-								<td>{parcel.deliveryCost}</td>
-								<td>
-									<span
-										className={`badge ${parcel.delivery_status === "collected" ? "badge-success" : "badge-warning"}`}
-									>
-										{parcel.delivery_status}
-									</span>
+						{data.length === 0 ? (
+							<tr>
+								<td colSpan="9" className="text-center text-gray-500 py-4">
+									No parcel found.
 								</td>
-								<td>
-									<span className={`badge ${parcel.payment_status === "paid" ? "badge-success" : "badge-error"}`}>
-										{parcel.payment_status}
-									</span>
-								</td>
-								<td className="font-mono">{parcel.tracking_id}</td>
-								<td>{format(new Date(parcel.created_at), "PPpp")}</td>
-								<td className="flex items-center justify-center gap-3 text-lg">
-									{parcel.payment_status !== "paid" && (
-										<Link
-											to={`/dashboard/payment/${parcel._id}`}
+							</tr>
+						) : (
+							data.map((parcel, index) => (
+								<tr key={parcel._id}>
+									<td>{index + 1}</td>
+									<td>{parcel.title}</td>
+									<td>{parcel.type || <span className="text-gray-400 italic">N/A</span>}</td>
+									<td>{parcel.deliveryCost}</td>
+									<td>
+										<span
+											className={`badge ${parcel.delivery_status === "collected" ? "badge-success" : "badge-warning"}`}
+										>
+											{parcel.delivery_status}
+										</span>
+									</td>
+									<td>
+										<span className={`badge ${parcel.payment_status === "paid" ? "badge-success" : "badge-error"}`}>
+											{parcel.payment_status}
+										</span>
+									</td>
+									<td className="font-mono">{parcel.tracking_id}</td>
+									<td>{format(new Date(parcel.created_at), "PPpp")}</td>
+									<td className="flex items-center justify-center gap-3 text-lg">
+										{parcel.payment_status !== "paid" && (
+											<Link
+												to={`/dashboard/payment/${parcel._id}`}
+												className="text-blue-600 hover:text-blue-800"
+												title="View"
+											>
+												Pay
+											</Link>
+										)}
+										<button
+											onClick={() => handleView(parcel)}
 											className="text-blue-600 hover:text-blue-800"
 											title="View"
 										>
-											Pay
-										</Link>
-									)}
-									<button onClick={() => handleView(parcel)} className="text-blue-600 hover:text-blue-800" title="View">
-										<FaEye />
-									</button>
-									<button
-										onClick={() => handleDelete(parcel._id)}
-										className="text-red-600 hover:text-red-800"
-										title="Delete"
-									>
-										<FaTrash />
-									</button>
-								</td>
-							</tr>
-						))}
+											<FaEye />
+										</button>
+										<button
+											onClick={() => handleDelete(parcel._id)}
+											className="text-red-600 hover:text-red-800"
+											title="Delete"
+										>
+											<FaTrash />
+										</button>
+									</td>
+								</tr>
+							))
+						)}
 					</tbody>
 				</table>
 			</div>

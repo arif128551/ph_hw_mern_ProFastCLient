@@ -16,7 +16,7 @@ const Register = () => {
 		formState: { errors },
 	} = useForm();
 
-	const { createUser, setUser, updateUser, googleSignIn, setLoading } = useAuth();
+	const { createUser, setUser, updateUser, setLoading } = useAuth();
 	const [imagePreview, setImagePreview] = useState(null);
 	const axiosInstance = useAxios();
 	const socialLogin = useSocialLogin();
