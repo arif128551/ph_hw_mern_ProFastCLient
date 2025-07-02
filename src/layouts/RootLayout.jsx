@@ -13,7 +13,7 @@ const RootLayout = () => {
 		return <PageLoader />;
 	}
 	return (
-		<div className="bg-ceaeced pt-8 pb-12 px-4">
+		<div className="bg-ceaeced pt-8 pb-12 px-4 min-h-screen">
 			<Navbar></Navbar>
 			<Outlet></Outlet>
 			<Footer></Footer>

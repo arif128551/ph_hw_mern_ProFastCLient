@@ -44,19 +44,21 @@ const AuthProvider = ({ children }) => {
 		const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
 			try {
 				if (currentUser) {
-					await auth.currentUser?.reload();
-					await auth.currentUser?.getIdToken(true);
-					setUser(auth.currentUser);
+					await currentUser.reload();
+					await currentUser.getIdToken(true);
+					setUser(currentUser);
 				} else {
 					setUser(null);
 				}
 			} catch (err) {
-				toast.error("Auth error:", err);
+				console.error("Auth error:", err);
+				toast.error("Auth error occurred.");
 				setUser(null);
 			} finally {
 				setLoading(false);
 			}
 		});
+
 		return () => unsubscribe();
 	}, []);
 

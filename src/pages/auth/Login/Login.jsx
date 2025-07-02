@@ -33,9 +33,18 @@ const Login = () => {
 
 				// Update last login time in DB
 				try {
-					await axiosInstance.patch(`/users/${user.email}`, {
-						last_login_at: lastLoginTime,
-					});
+					const token = await user.getIdToken(true);
+					await axiosInstance.patch(
+						`/users/${user.email}`,
+						{
+							last_login_at: lastLoginTime,
+						},
+						{
+							headers: {
+								Authorization: `Bearer ${token}`,
+							},
+						}
+					);
 				} catch (err) {
 					console.error("DB update failed:", err.message);
 					toast.error("Login successful, but failed to update login time.");

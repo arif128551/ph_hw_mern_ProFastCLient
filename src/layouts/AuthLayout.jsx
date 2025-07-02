@@ -12,7 +12,7 @@ const AuthLayout = () => {
 	}
 
 	return (
-		<div className="flex lg:min-h-screen flex-col lg:flex-row">
+		<div className="flex min-h-screen flex-col lg:flex-row">
 			<div className="lg:w-7/12 px-11 py-14 lg:h-full">
 				<div className="mb-10 lg:mb-0">
 					<Link to="/" className="flex gap-0 items-end">

@@ -31,18 +31,35 @@ const useSocialLogin = () => {
 
 			let isNewUser = true;
 
-			// Try to save to DB
-			await axiosInstance.post("/users", userDoc).catch(async (err) => {
-				if (err.response?.status === 409) {
-					isNewUser = false;
-					// update only last_login_at
-					await axiosInstance.patch(`/users/${email}`, {
-						last_login_at: new Date().toISOString(),
-					});
-				} else {
-					throw err;
+			const createUser = async () => {
+				try {
+					await axiosInstance.post("/users", userDoc);
+					isNewUser = true;
+				} catch (err) {
+					if (err.response?.status === 200) {
+						// Silent handle - no console.error
+						isNewUser = false;
+						try {
+							const token = await user.getIdToken(true);
+							await axiosInstance.patch(
+								`/users/${email}`,
+								{ last_login_at: new Date().toISOString() },
+								{
+									headers: {
+										Authorization: `Bearer ${token}`,
+									},
+								}
+							);
+						} catch (updateError) {
+							console.error("Fallback patch failed", updateError);
+						}
+					} else {
+						console.error("User creation failed", err);
+					}
 				}
-			});
+			};
+
+			await createUser();
 
 			// Show toast based on status
 			if (isNewUser) {
@@ -54,7 +71,7 @@ const useSocialLogin = () => {
 			setUser(user);
 			navigate(from, { replace: true });
 		} catch (error) {
-			console.error("Social Login Error:", error);
+			// console.error("Social Login Error:", error);
 			toast.error("Google Login failed.");
 		} finally {
 			setLoading(false);

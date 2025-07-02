@@ -42,6 +42,9 @@ const Navbar = () => {
 			{user ? (
 				<>
 					<li>
+						<NavLink to="/be-a-rider">Be a rider</NavLink>
+					</li>
+					<li>
 						<NavLink to="/dashboard">Dashboard</NavLink>
 					</li>
 					<li className="sm:hidden">

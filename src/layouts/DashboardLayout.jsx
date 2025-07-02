@@ -58,6 +58,16 @@ const DashboardLayout = () => {
 						</NavLink>
 					</li>
 					<li>
+						<NavLink to="/dashboard/pending-riders" className="hover:bg-gray-700 rounded">
+							Pending Riders
+						</NavLink>
+					</li>
+					<li>
+						<NavLink to="/dashboard/active-riders" className="hover:bg-gray-700 rounded">
+							Active Riders
+						</NavLink>
+					</li>
+					<li>
 						<NavLink to="/dashboard/my-parcel" className="hover:bg-gray-700 rounded">
 							My Parcels
 						</NavLink>

@@ -16,6 +16,10 @@ import Payment from "../pages/dashboard/Payment/Payment";
 import PaymentHistory from "../pages/dashboard/PaymentHistory/PaymentHistory";
 import TrackParcel from "../pages/dashboard/TrackParcel/TrackParcel";
 import UpdateProfile from "../pages/dashboard/UpdateProfile/UpdateProfile";
+import BeARider from "../pages/BeARider/BeARider";
+import warehouseLoader from "../loaders/warehouseLoader";
+import ActiveRiders from "../pages/dashboard/riders/ActiveRiders";
+import PendingRiders from "../pages/dashboard/riders/PendingRiders";
 
 export const router = createBrowserRouter([
 	{
@@ -30,7 +34,7 @@ export const router = createBrowserRouter([
 			{
 				path: "/coverage",
 				Component: Coverage,
-				loader: () => axios.get("/warehouses.json").then((res) => res.data),
+				loader: warehouseLoader,
 			},
 			{
 				path: "/send-parcel",
@@ -39,7 +43,16 @@ export const router = createBrowserRouter([
 						<SendParcel></SendParcel>
 					</PrivateRoute>
 				),
-				loader: () => axios.get("/warehouses.json").then((res) => res.data),
+				loader: warehouseLoader,
+			},
+			{
+				path: "/be-a-rider",
+				element: (
+					<PrivateRoute>
+						<BeARider></BeARider>
+					</PrivateRoute>
+				),
+				loader: warehouseLoader,
 			},
 		],
 	},
@@ -90,6 +103,14 @@ export const router = createBrowserRouter([
 			{
 				path: "profile",
 				Component: UpdateProfile,
+			},
+			{
+				path: "active-riders",
+				Component: ActiveRiders,
+			},
+			{
+				path: "pending-riders",
+				Component: PendingRiders,
 			},
 		],
 	},
