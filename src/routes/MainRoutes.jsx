@@ -20,6 +20,7 @@ import BeARider from "../pages/BeARider/BeARider";
 import warehouseLoader from "../loaders/warehouseLoader";
 import ActiveRiders from "../pages/dashboard/riders/ActiveRiders";
 import PendingRiders from "../pages/dashboard/riders/PendingRiders";
+import ManageUsers from "../pages/dashboard/Dashboard/ManageUsers/ManageUsers";
 
 export const router = createBrowserRouter([
 	{
@@ -111,6 +112,10 @@ export const router = createBrowserRouter([
 			{
 				path: "pending-riders",
 				Component: PendingRiders,
+			},
+			{
+				path: "manage-users",
+				element: <ManageUsers />,
 			},
 		],
 	},

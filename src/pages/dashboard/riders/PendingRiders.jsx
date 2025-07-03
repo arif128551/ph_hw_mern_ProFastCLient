@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import PageLoader from "../../../components/PageLoader";
 import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const PendingRiders = () => {
 	const axiosSecure = useAxiosSecure();
@@ -24,8 +25,11 @@ const PendingRiders = () => {
 
 	// Accept rider
 	const acceptMutation = useMutation({
-		mutationFn: async (id) => {
-			const res = await axiosSecure.patch(`/riders/${id}`, { status: "active" });
+		mutationFn: async ({ id, email }) => {
+			const res = await axiosSecure.patch(`/riders/${id}`, {
+				status: "active",
+				email, // this is required in backend
+			});
 			return res.data;
 		},
 		onSuccess: (data) => {
@@ -71,7 +75,7 @@ const PendingRiders = () => {
 							<th>Email</th>
 							<th>Phone</th>
 							<th>Joined At</th>
-							<th>Action</th>
+							<th>Actions</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -89,9 +93,54 @@ const PendingRiders = () => {
 									<td>{rider.email}</td>
 									<td>{rider.contact || "N/A"}</td>
 									<td>{new Date(rider.created_at).toLocaleString()}</td>
-									<td>
+									<td className="space-x-2">
+										{/* View Button */}
 										<button onClick={() => setSelectedRider(rider)} className="btn btn-sm btn-info text-white">
 											View
+										</button>
+
+										{/* Accept Button with Swal Confirm */}
+										<button
+											onClick={() => {
+												Swal.fire({
+													title: "Are you sure?",
+													text: `Activate rider ${rider.name}?`,
+													icon: "warning",
+													showCancelButton: true,
+													confirmButtonColor: "#10b981",
+													cancelButtonColor: "#d33",
+													confirmButtonText: "Yes, activate",
+												}).then((result) => {
+													if (result.isConfirmed) {
+														acceptMutation.mutate({ id: rider._id, email: rider.email });
+													}
+												});
+											}}
+											className="btn btn-sm btn-success"
+										>
+											Activate
+										</button>
+
+										{/* Cancel Button with Swal Confirm */}
+										<button
+											onClick={() => {
+												Swal.fire({
+													title: "Are you sure?",
+													text: `Cancel rider ${rider.name}?`,
+													icon: "warning",
+													showCancelButton: true,
+													confirmButtonColor: "#ef4444",
+													cancelButtonColor: "#3085d6",
+													confirmButtonText: "Yes, cancel",
+												}).then((result) => {
+													if (result.isConfirmed) {
+														cancelMutation.mutate(rider._id);
+													}
+												});
+											}}
+											className="btn btn-sm btn-error"
+										>
+											Cancel
 										</button>
 									</td>
 								</tr>
@@ -148,14 +197,14 @@ const PendingRiders = () => {
 							</p>
 						</div>
 
-						<div className="modal-action mt-6">
+						{/* <div className="modal-action mt-6">
 							<button className="btn btn-success btn-sm" onClick={() => acceptMutation.mutate(selectedRider._id)}>
 								Accept
 							</button>
 							<button className="btn btn-error btn-sm" onClick={() => cancelMutation.mutate(selectedRider._id)}>
 								Reject
 							</button>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			)}

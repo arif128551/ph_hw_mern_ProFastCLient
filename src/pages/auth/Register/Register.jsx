@@ -18,6 +18,7 @@ const Register = () => {
 
 	const { createUser, setUser, updateUser, setLoading } = useAuth();
 	const [imagePreview, setImagePreview] = useState(null);
+	const [photoUrl, setPhotoUrl] = useState(null);
 	const axiosInstance = useAxios();
 	const socialLogin = useSocialLogin();
 
@@ -25,15 +26,20 @@ const Register = () => {
 	const navigate = useNavigate();
 	const from = location.state?.from?.pathname || "/";
 
-	const onSubmit = async ({ displayName, photoUrl, email, password }) => {
+	const onSubmit = async ({ displayName, email, password }) => {
+		if (!photoUrl) {
+			toast.error("Please upload a profile photo");
+			return;
+		}
 		setLoading(true);
 		const timestamp = new Date().toISOString();
+		const finalPhotoUrl = photoUrl || "https://i.ibb.co/default-avatar.png";
 
 		try {
 			const { user } = await createUser(email, password);
-			await updateUser({ displayName, photoURL: photoUrl });
+			await updateUser({ displayName, photoURL: finalPhotoUrl });
 
-			setUser({ ...user, displayName, photoURL: photoUrl });
+			setUser({ ...user, displayName, photoURL: finalPhotoUrl });
 
 			const userDoc = {
 				displayName,
@@ -85,7 +91,8 @@ const Register = () => {
 
 			if (res.data.success) {
 				const imageUrl = res.data.data.url;
-				setValue("photoUrl", imageUrl);
+				// setValue("photoUrl", imageUrl);
+				setPhotoUrl(imageUrl);
 				console.log("Image uploaded:", imageUrl);
 			}
 		} catch (err) {
@@ -135,13 +142,13 @@ const Register = () => {
 				/>
 
 				{/* ✅ Hidden Photo URL Input for Form Submission */}
-				<input
+				{/* <input
 					type="hidden"
 					{...register("photoUrl", {
 						required: "Photo URL is required",
 					})}
 				/>
-				{errors.photoUrl && <p className="text-red-500">{errors.photoUrl.message}</p>}
+				{errors.photoUrl && <p className="text-red-500">{errors.photoUrl.message}</p>} */}
 				<label className="label">Email</label>
 				<input
 					type="email"
