@@ -29,39 +29,35 @@ const useSocialLogin = () => {
 				last_login_at: lastSignInTime ? new Date(lastSignInTime).toISOString() : new Date().toISOString(),
 			};
 
-			let isNewUser = true;
-
+			// define the createUser function that returns a boolean
 			const createUser = async () => {
 				try {
-					await axiosInstance.post("/users", userDoc);
-					isNewUser = true;
-				} catch (err) {
-					if (err.response?.status === 200) {
-						// Silent handle - no console.error
-						isNewUser = false;
-						try {
-							const token = await user.getIdToken(true);
-							await axiosInstance.patch(
-								`/users/${email}`,
-								{ last_login_at: new Date().toISOString() },
-								{
-									headers: {
-										Authorization: `Bearer ${token}`,
-									},
-								}
-							);
-						} catch (updateError) {
-							console.error("Fallback patch failed", updateError);
-						}
-					} else {
-						console.error("User creation failed", err);
+					const res = await axiosInstance.post("/users", userDoc);
+					if (res.status === 200 && res.data?.exists) {
+						// user already exists → fallback patch
+						const token = await user.getIdToken(true);
+						await axiosInstance.patch(
+							`/users/${email}`,
+							{ last_login_at: new Date().toISOString() },
+							{
+								headers: {
+									Authorization: `Bearer ${token}`,
+								},
+							}
+						);
+						return false; // existing user
 					}
+					return true; // new user created (201)
+				} catch (err) {
+					console.error("User creation failed:", err);
+					return false;
 				}
 			};
 
-			await createUser();
+			// now safely await
+			const isNewUser = await createUser();
 
-			// Show toast based on status
+			// success alert
 			if (isNewUser) {
 				toast.success("Account created successfully! You're now logged in.");
 			} else {
@@ -71,7 +67,6 @@ const useSocialLogin = () => {
 			setUser(user);
 			navigate(from, { replace: true });
 		} catch (error) {
-			// console.error("Social Login Error:", error);
 			toast.error("Google Login failed.");
 		} finally {
 			setLoading(false);
