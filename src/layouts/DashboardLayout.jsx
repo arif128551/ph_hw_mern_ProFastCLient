@@ -3,14 +3,17 @@ import { NavLink, Outlet, useNavigation } from "react-router";
 import useAuth from "../hooks/useAuth";
 import PageLoader from "../components/PageLoader";
 import Logo from "../pages/shared/Logo/Logo";
+import useUserRole from "../hooks/useUserRole";
 
 const DashboardLayout = () => {
 	const { loading, user } = useAuth();
 	const navigation = useNavigation();
 	const isLoading = navigation.state === "loading";
-	if (loading || isLoading) {
+	const { role, isLoading: roleLoading } = useUserRole();
+	if (loading || isLoading || roleLoading) {
 		return <PageLoader />;
 	}
+
 	return (
 		<div className="drawer lg:drawer-open">
 			<input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
@@ -57,31 +60,37 @@ const DashboardLayout = () => {
 							Dashboard
 						</NavLink>
 					</li>
-					<li>
-						<NavLink to="/dashboard/pending-riders" className="hover:bg-gray-700 rounded">
-							Pending Riders
-						</NavLink>
-					</li>
-					<li>
-						<NavLink to="/dashboard/manage-users" className="hover:bg-gray-700 rounded">
-							Manage Users
-						</NavLink>
-					</li>
-					<li>
-						<NavLink to="/dashboard/active-riders" className="hover:bg-gray-700 rounded">
-							Active Riders
-						</NavLink>
-					</li>
+					{!roleLoading && role === "admin" && (
+						<>
+							{" "}
+							<li>
+								<NavLink to="/dashboard/pending-riders" className="hover:bg-gray-700 rounded">
+									Pending Riders
+								</NavLink>
+							</li>
+							<li>
+								<NavLink to="/dashboard/manage-users" className="hover:bg-gray-700 rounded">
+									Manage Users
+								</NavLink>
+							</li>
+							<li>
+								<NavLink to="/dashboard/active-riders" className="hover:bg-gray-700 rounded">
+									Active Riders
+								</NavLink>
+							</li>
+							<li>
+								<NavLink to="/dashboard/payment-history" className="hover:bg-gray-700 rounded">
+									Payment History
+								</NavLink>
+							</li>
+						</>
+					)}
 					<li>
 						<NavLink to="/dashboard/my-parcel" className="hover:bg-gray-700 rounded">
 							My Parcels
 						</NavLink>
 					</li>
-					<li>
-						<NavLink to="/dashboard/payment-history" className="hover:bg-gray-700 rounded">
-							Payment History
-						</NavLink>
-					</li>
+
 					<li>
 						<NavLink to="/dashboard/track-parcel" className="hover:bg-gray-700 rounded">
 							Track parcel
