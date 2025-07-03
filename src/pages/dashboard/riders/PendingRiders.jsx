@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import PageLoader from "../../../components/PageLoader";
+import toast from "react-hot-toast";
 
 const PendingRiders = () => {
 	const axiosSecure = useAxiosSecure();
@@ -23,19 +24,35 @@ const PendingRiders = () => {
 
 	// Accept rider
 	const acceptMutation = useMutation({
-		mutationFn: (id) => axiosSecure.patch(`/riders/${id}`, { status: "active" }),
-		onSuccess: () => {
+		mutationFn: async (id) => {
+			const res = await axiosSecure.patch(`/riders/${id}`, { status: "active" });
+			return res.data;
+		},
+		onSuccess: (data) => {
+			toast.success("Rider accepted successfully!");
 			queryClient.invalidateQueries(["pendingRiders"]);
 			setSelectedRider(null);
 		},
+		onError: (error) => {
+			console.error(error);
+			toast.error("Failed to accept rider.");
+		},
 	});
 
-	// Cancel rider
+	// Reject rider
 	const cancelMutation = useMutation({
-		mutationFn: (id) => axiosSecure.patch(`/riders/${id}`, { status: "rejected" }),
-		onSuccess: () => {
+		mutationFn: async (id) => {
+			const res = await axiosSecure.patch(`/riders/${id}`, { status: "rejected" });
+			return res.data;
+		},
+		onSuccess: (data) => {
+			toast.success("Rider rejected successfully!");
 			queryClient.invalidateQueries(["pendingRiders"]);
 			setSelectedRider(null);
+		},
+		onError: (error) => {
+			console.error(error);
+			toast.error("Failed to reject rider.");
 		},
 	});
 
